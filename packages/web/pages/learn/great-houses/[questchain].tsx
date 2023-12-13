@@ -5,9 +5,10 @@ import QuestChainDisplay from 'components/QuestChain/QuestChainDisplay';
 import { HeadComponent } from 'components/Seo';
 import { GetStaticPaths, GetStaticPropsContext } from 'next';
 import React from 'react';
+import { errorHandler } from 'utils/errorHandler';
 import {
-  QuestChainRolesDetails,
-  QuestChainsRoles,
+  QuestChainGreatHousesDetails,
+  QuestChainsGreatHouses,
   QuestChainType,
 } from 'utils/questChains';
 
@@ -35,7 +36,7 @@ const QuestChainPathPage: React.FC<Props> = ({
       <HeadComponent
         title={`MetaGame ${inputQuestChain.name}`}
         description="MetaGame is a Massive Online Coordination Game! MetaGame has some epic quests going on!"
-        url="https://my.metagame.wtf/quests/path-of-the-engaged"
+        url="https://metagame.wtf/learn/thegreathouses"
       />
       <QuestChainDisplay inputQuestChain={inputQuestChain} name={name} />
     </PageContainer>
@@ -47,7 +48,7 @@ export default QuestChainPathPage;
 type QueryParams = { questchain: QuestChainType };
 
 export const getStaticPaths: GetStaticPaths<QueryParams> = async () => ({
-  paths: Object.values(QuestChainsRoles).map((questchain) => ({
+  paths: Object.values(QuestChainsGreatHouses).map((questchain) => ({
     params: { questchain },
   })),
   fallback: false,
@@ -56,26 +57,29 @@ export const getStaticPaths: GetStaticPaths<QueryParams> = async () => ({
 export const getStaticProps = async (
   context: GetStaticPropsContext<QueryParams>,
 ) => {
-  const questChainName = context.params?.questchain;
-  if (questChainName) {
-    let questChain: graphql.QuestChainInfoFragment | null = null;
-    try {
-      const info = QuestChainRolesDetails[questChainName];
-      questChain = await getQuestChainInfo(info.chainId, info.address);
-      if (questChain != null) {
-        return {
-          props: {
-            questChain,
-            name: questChainName,
-          },
-          revalidate: 1,
-        };
-      }
-    } catch (error) {
-      console.error('error', error);
-    }
+  const questchain = context.params?.questchain;
+  if (!questchain) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
   }
+
+  let questChain: graphql.QuestChainInfoFragment | null = null;
+  try {
+    const info = QuestChainGreatHousesDetails[questchain];
+    questChain = await getQuestChainInfo(info.chainId, info.address);
+  } catch (error) {
+    errorHandler(error as Error);
+  }
+
   return {
-    notFound: true,
+    props: {
+      questChain,
+      name: questchain,
+    },
+    revalidate: 1,
   };
 };
