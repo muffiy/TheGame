@@ -1069,6 +1069,7 @@ type dao_player {
   Player: player!
   daoId: uuid!
   playerId: uuid!
+  position: Int
   visible: Boolean
 }
 """
@@ -1082,19 +1083,33 @@ type dao_player_aggregate {
 aggregate fields of "dao_player"
 """
 type dao_player_aggregate_fields {
+  avg: dao_player_avg_fields
   count(columns: [dao_player_select_column!], distinct: Boolean): Int!
   max: dao_player_max_fields
   min: dao_player_min_fields
+  stddev: dao_player_stddev_fields
+  stddev_pop: dao_player_stddev_pop_fields
+  stddev_samp: dao_player_stddev_samp_fields
+  sum: dao_player_sum_fields
+  var_pop: dao_player_var_pop_fields
+  var_samp: dao_player_var_samp_fields
+  variance: dao_player_variance_fields
+}
+"aggregate avg on columns"
+type dao_player_avg_fields {
+  position: Float
 }
 "aggregate max on columns"
 type dao_player_max_fields {
   daoId: uuid
   playerId: uuid
+  position: Int
 }
 "aggregate min on columns"
 type dao_player_min_fields {
   daoId: uuid
   playerId: uuid
+  position: Int
 }
 """
 response of any mutation on the table "dao_player"
@@ -1104,6 +1119,34 @@ type dao_player_mutation_response {
   affected_rows: Int!
   "data from the rows affected by the mutation"
   returning: [dao_player!]!
+}
+"aggregate stddev on columns"
+type dao_player_stddev_fields {
+  position: Float
+}
+"aggregate stddev_pop on columns"
+type dao_player_stddev_pop_fields {
+  position: Float
+}
+"aggregate stddev_samp on columns"
+type dao_player_stddev_samp_fields {
+  position: Float
+}
+"aggregate sum on columns"
+type dao_player_sum_fields {
+  position: Int
+}
+"aggregate var_pop on columns"
+type dao_player_var_pop_fields {
+  position: Float
+}
+"aggregate var_samp on columns"
+type dao_player_var_samp_fields {
+  position: Float
+}
+"aggregate variance on columns"
+type dao_player_variance_fields {
+  position: Float
 }
 """
 columns and relationships of "guild"
@@ -1170,6 +1213,7 @@ type guild {
   guildname: String!
   id: uuid!
   joinButtonUrl: String
+  legitimacy: String
   "An array relationship"
   links(
     "distinct select on columns"
@@ -1271,6 +1315,7 @@ type guild_max_fields {
   guildname: String
   id: uuid
   joinButtonUrl: String
+  legitimacy: String
   logo: String
   name: String
   profileLayout: String
@@ -1337,6 +1382,7 @@ type guild_min_fields {
   guildname: String
   id: uuid
   joinButtonUrl: String
+  legitimacy: String
   logo: String
   name: String
   profileLayout: String
@@ -1364,6 +1410,8 @@ type guild_player {
   discordRoles: [DiscordRole!]!
   guildId: uuid!
   playerId: uuid!
+  position: Int
+  visible: Boolean!
 }
 """
 aggregated selection of "guild_player"
@@ -1376,19 +1424,33 @@ type guild_player_aggregate {
 aggregate fields of "guild_player"
 """
 type guild_player_aggregate_fields {
+  avg: guild_player_avg_fields
   count(columns: [guild_player_select_column!], distinct: Boolean): Int!
   max: guild_player_max_fields
   min: guild_player_min_fields
+  stddev: guild_player_stddev_fields
+  stddev_pop: guild_player_stddev_pop_fields
+  stddev_samp: guild_player_stddev_samp_fields
+  sum: guild_player_sum_fields
+  var_pop: guild_player_var_pop_fields
+  var_samp: guild_player_var_samp_fields
+  variance: guild_player_variance_fields
+}
+"aggregate avg on columns"
+type guild_player_avg_fields {
+  position: Float
 }
 "aggregate max on columns"
 type guild_player_max_fields {
   guildId: uuid
   playerId: uuid
+  position: Int
 }
 "aggregate min on columns"
 type guild_player_min_fields {
   guildId: uuid
   playerId: uuid
+  position: Int
 }
 """
 response of any mutation on the table "guild_player"
@@ -1398,6 +1460,34 @@ type guild_player_mutation_response {
   affected_rows: Int!
   "data from the rows affected by the mutation"
   returning: [guild_player!]!
+}
+"aggregate stddev on columns"
+type guild_player_stddev_fields {
+  position: Float
+}
+"aggregate stddev_pop on columns"
+type guild_player_stddev_pop_fields {
+  position: Float
+}
+"aggregate stddev_samp on columns"
+type guild_player_stddev_samp_fields {
+  position: Float
+}
+"aggregate sum on columns"
+type guild_player_sum_fields {
+  position: Int
+}
+"aggregate var_pop on columns"
+type guild_player_var_pop_fields {
+  position: Float
+}
+"aggregate var_samp on columns"
+type guild_player_var_samp_fields {
+  position: Float
+}
+"aggregate variance on columns"
+type guild_player_variance_fields {
+  position: Float
 }
 "aggregate stddev on columns"
 type guild_stddev_fields {
@@ -1735,6 +1825,17 @@ type mutation_root {
   delete single row from the table: "link"
   """
   delete_link_by_pk(id: uuid!): link
+  """
+  delete data from the table: "pinned_questchains"
+  """
+  delete_pinned_questchains(
+    "filter the rows which have to be deleted"
+    where: pinned_questchains_bool_exp!
+  ): pinned_questchains_mutation_response
+  """
+  delete single row from the table: "pinned_questchains"
+  """
+  delete_pinned_questchains_by_pk(player_id: uuid!, questchain_id: String!): pinned_questchains
   """
   delete data from the table: "player"
   """
@@ -2209,6 +2310,24 @@ type mutation_root {
     "upsert condition"
     on_conflict: link_on_conflict
   ): link
+  """
+  insert data into the table: "pinned_questchains"
+  """
+  insert_pinned_questchains(
+    "the rows to be inserted"
+    objects: [pinned_questchains_insert_input!]!,
+    "upsert condition"
+    on_conflict: pinned_questchains_on_conflict
+  ): pinned_questchains_mutation_response
+  """
+  insert a single row into the table: "pinned_questchains"
+  """
+  insert_pinned_questchains_one(
+    "the row to be inserted"
+    object: pinned_questchains_insert_input!,
+    "upsert condition"
+    on_conflict: pinned_questchains_on_conflict
+  ): pinned_questchains
   """
   insert data into the table: "player"
   """
@@ -2758,6 +2877,8 @@ type mutation_root {
   update data of the table: "dao_player"
   """
   update_dao_player(
+    "increments the numeric columns with given value of the filtered values"
+    _inc: dao_player_inc_input,
     "sets the columns of the filtered rows to the given values"
     _set: dao_player_set_input,
     "filter the rows which have to be updated"
@@ -2767,6 +2888,8 @@ type mutation_root {
   update single row of the table: "dao_player"
   """
   update_dao_player_by_pk(
+    "increments the numeric columns with given value of the filtered values"
+    _inc: dao_player_inc_input,
     "sets the columns of the filtered rows to the given values"
     _set: dao_player_set_input,pk_columns: dao_player_pk_columns_input!  ): dao_player
   """
@@ -2848,6 +2971,8 @@ type mutation_root {
   update data of the table: "guild_player"
   """
   update_guild_player(
+    "increments the numeric columns with given value of the filtered values"
+    _inc: guild_player_inc_input,
     "sets the columns of the filtered rows to the given values"
     _set: guild_player_set_input,
     "filter the rows which have to be updated"
@@ -2857,6 +2982,8 @@ type mutation_root {
   update single row of the table: "guild_player"
   """
   update_guild_player_by_pk(
+    "increments the numeric columns with given value of the filtered values"
+    _inc: guild_player_inc_input,
     "sets the columns of the filtered rows to the given values"
     _set: guild_player_set_input,pk_columns: guild_player_pk_columns_input!  ): guild_player
   """
@@ -2889,11 +3016,43 @@ type mutation_root {
     updates: [link_updates!]!
   ): [link_mutation_response]
   """
+  update data of the table: "pinned_questchains"
+  """
+  update_pinned_questchains(
+    "sets the columns of the filtered rows to the given values"
+    _set: pinned_questchains_set_input,
+    "filter the rows which have to be updated"
+    where: pinned_questchains_bool_exp!
+  ): pinned_questchains_mutation_response
+  """
+  update single row of the table: "pinned_questchains"
+  """
+  update_pinned_questchains_by_pk(
+    "sets the columns of the filtered rows to the given values"
+    _set: pinned_questchains_set_input,pk_columns: pinned_questchains_pk_columns_input!  ): pinned_questchains
+  """
+  update multiples rows of table: "pinned_questchains"
+  """
+  update_pinned_questchains_many(
+    "updates to execute, in order"
+    updates: [pinned_questchains_updates!]!
+  ): [pinned_questchains_mutation_response]
+  """
   update data of the table: "player"
   """
   update_player(
+    "append existing jsonb value of filtered columns with new jsonb value"
+    _append: player_append_input,
+    "delete the field or element with specified path (for JSON arrays, negative integers count from the end)"
+    _delete_at_path: player_delete_at_path_input,
+    "delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array"
+    _delete_elem: player_delete_elem_input,
+    "delete key/value pair or string element. key/value pairs are matched based on their key value"
+    _delete_key: player_delete_key_input,
     "increments the numeric columns with given value of the filtered values"
     _inc: player_inc_input,
+    "prepend existing jsonb value of filtered columns with new jsonb value"
+    _prepend: player_prepend_input,
     "sets the columns of the filtered rows to the given values"
     _set: player_set_input,
     "filter the rows which have to be updated"
@@ -2925,8 +3084,18 @@ type mutation_root {
   update single row of the table: "player"
   """
   update_player_by_pk(
+    "append existing jsonb value of filtered columns with new jsonb value"
+    _append: player_append_input,
+    "delete the field or element with specified path (for JSON arrays, negative integers count from the end)"
+    _delete_at_path: player_delete_at_path_input,
+    "delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array"
+    _delete_elem: player_delete_elem_input,
+    "delete key/value pair or string element. key/value pairs are matched based on their key value"
+    _delete_key: player_delete_key_input,
     "increments the numeric columns with given value of the filtered values"
     _inc: player_inc_input,
+    "prepend existing jsonb value of filtered columns with new jsonb value"
+    _prepend: player_prepend_input,
     "sets the columns of the filtered rows to the given values"
     _set: player_set_input,pk_columns: player_pk_columns_input!  ): player
   """
@@ -3185,6 +3354,48 @@ type mutation_root {
     updates: [xp_updates!]!
   ): [xp_mutation_response]
 }
+"questchains pinned to a specific user's profile"
+type pinned_questchains {
+  id: uuid!
+  player_id: uuid!
+  questchain_id: String!
+}
+"""
+aggregated selection of "pinned_questchains"
+"""
+type pinned_questchains_aggregate {
+  aggregate: pinned_questchains_aggregate_fields
+  nodes: [pinned_questchains!]!
+}
+"""
+aggregate fields of "pinned_questchains"
+"""
+type pinned_questchains_aggregate_fields {
+  count(columns: [pinned_questchains_select_column!], distinct: Boolean): Int!
+  max: pinned_questchains_max_fields
+  min: pinned_questchains_min_fields
+}
+"aggregate max on columns"
+type pinned_questchains_max_fields {
+  id: uuid
+  player_id: uuid
+  questchain_id: String
+}
+"aggregate min on columns"
+type pinned_questchains_min_fields {
+  id: uuid
+  player_id: uuid
+  questchain_id: String
+}
+"""
+response of any mutation on the table "pinned_questchains"
+"""
+type pinned_questchains_mutation_response {
+  "number of rows affected by the mutation"
+  affected_rows: Int!
+  "data from the rows affected by the mutation"
+  returning: [pinned_questchains!]!
+}
 """
 columns and relationships of "player"
 """
@@ -3301,6 +3512,10 @@ type player {
     "filter the rows returned"
     where: link_bool_exp
   ): link_aggregate!
+  membership_metadata(
+    "JSON select path"
+    path: String
+  ): jsonb
   "An object relationship"
   profile: profile
   profileLayout: String
@@ -4591,6 +4806,40 @@ type query_root {
     "filter the rows returned"
     where: me_bool_exp
   ): me_aggregate!
+  """
+  fetch data from the table: "pinned_questchains"
+  """
+  pinned_questchains(
+    "distinct select on columns"
+    distinct_on: [pinned_questchains_select_column!],
+    "limit the number of rows returned"
+    limit: Int,
+    "skip the first n rows. Use only with order_by"
+    offset: Int,
+    "sort the rows by one or more columns"
+    order_by: [pinned_questchains_order_by!],
+    "filter the rows returned"
+    where: pinned_questchains_bool_exp
+  ): [pinned_questchains!]!
+  """
+  fetch aggregated fields from the table: "pinned_questchains"
+  """
+  pinned_questchains_aggregate(
+    "distinct select on columns"
+    distinct_on: [pinned_questchains_select_column!],
+    "limit the number of rows returned"
+    limit: Int,
+    "skip the first n rows. Use only with order_by"
+    offset: Int,
+    "sort the rows by one or more columns"
+    order_by: [pinned_questchains_order_by!],
+    "filter the rows returned"
+    where: pinned_questchains_bool_exp
+  ): pinned_questchains_aggregate!
+  """
+  fetch data from the table: "pinned_questchains" using primary key columns
+  """
+  pinned_questchains_by_pk(player_id: uuid!, questchain_id: String!): pinned_questchains
   """
   fetch data from the table: "player"
   """
@@ -6385,6 +6634,51 @@ type subscription_root {
     where: me_bool_exp
   ): [me!]!
   """
+  fetch data from the table: "pinned_questchains"
+  """
+  pinned_questchains(
+    "distinct select on columns"
+    distinct_on: [pinned_questchains_select_column!],
+    "limit the number of rows returned"
+    limit: Int,
+    "skip the first n rows. Use only with order_by"
+    offset: Int,
+    "sort the rows by one or more columns"
+    order_by: [pinned_questchains_order_by!],
+    "filter the rows returned"
+    where: pinned_questchains_bool_exp
+  ): [pinned_questchains!]!
+  """
+  fetch aggregated fields from the table: "pinned_questchains"
+  """
+  pinned_questchains_aggregate(
+    "distinct select on columns"
+    distinct_on: [pinned_questchains_select_column!],
+    "limit the number of rows returned"
+    limit: Int,
+    "skip the first n rows. Use only with order_by"
+    offset: Int,
+    "sort the rows by one or more columns"
+    order_by: [pinned_questchains_order_by!],
+    "filter the rows returned"
+    where: pinned_questchains_bool_exp
+  ): pinned_questchains_aggregate!
+  """
+  fetch data from the table: "pinned_questchains" using primary key columns
+  """
+  pinned_questchains_by_pk(player_id: uuid!, questchain_id: String!): pinned_questchains
+  """
+  fetch data from the table in a streaming manner: "pinned_questchains"
+  """
+  pinned_questchains_stream(
+    "maximum number of rows returned in a single batch"
+    batch_size: Int!,
+    "cursor to stream the results returned by the query"
+    cursor: [pinned_questchains_stream_cursor_input]!,
+    "filter the rows returned"
+    where: pinned_questchains_bool_exp
+  ): [pinned_questchains!]!
+  """
   fetch data from the table: "player"
   """
   player(
@@ -7707,6 +8001,8 @@ enum dao_player_select_column {
   "column name"
   playerId
   "column name"
+  position
+  "column name"
   visible
 }
 """
@@ -7731,6 +8027,8 @@ enum dao_player_update_column {
   daoId
   "column name"
   playerId
+  "column name"
+  position
   "column name"
   visible
 }
@@ -7831,6 +8129,10 @@ enum guild_player_constraint {
   """
   unique or primary key constraint on columns "guild_id", "player_id"
   """
+  guild_player_guild_id_player_id_key
+  """
+  unique or primary key constraint on columns "guild_id", "player_id"
+  """
   guild_player_pkey
 }
 """
@@ -7841,6 +8143,24 @@ enum guild_player_select_column {
   guildId
   "column name"
   playerId
+  "column name"
+  position
+  "column name"
+  visible
+}
+"""
+select "guild_player_aggregate_bool_exp_bool_and_arguments_columns" columns of table "guild_player"
+"""
+enum guild_player_select_column_guild_player_aggregate_bool_exp_bool_and_arguments_columns {
+  "column name"
+  visible
+}
+"""
+select "guild_player_aggregate_bool_exp_bool_or_arguments_columns" columns of table "guild_player"
+"""
+enum guild_player_select_column_guild_player_aggregate_bool_exp_bool_or_arguments_columns {
+  "column name"
+  visible
 }
 """
 update columns of table "guild_player"
@@ -7850,6 +8170,10 @@ enum guild_player_update_column {
   guildId
   "column name"
   playerId
+  "column name"
+  position
+  "column name"
+  visible
 }
 """
 select columns of table "guild"
@@ -7865,6 +8189,8 @@ enum guild_select_column {
   id
   "column name"
   joinButtonUrl
+  "column name"
+  legitimacy
   "column name"
   logo
   "column name"
@@ -7918,6 +8244,8 @@ enum guild_update_column {
   id
   "column name"
   joinButtonUrl
+  "column name"
+  legitimacy
   "column name"
   logo
   "column name"
@@ -8007,6 +8335,41 @@ enum order_by {
   desc_nulls_first
   "in descending order, nulls last"
   desc_nulls_last
+}
+"""
+unique or primary key constraints on table "pinned_questchains"
+"""
+enum pinned_questchains_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  pinned_questchains_id_key
+  """
+  unique or primary key constraint on columns "questchain_id", "player_id"
+  """
+  pinned_questchains_pkey
+}
+"""
+select columns of table "pinned_questchains"
+"""
+enum pinned_questchains_select_column {
+  "column name"
+  id
+  "column name"
+  player_id
+  "column name"
+  questchain_id
+}
+"""
+update columns of table "pinned_questchains"
+"""
+enum pinned_questchains_update_column {
+  "column name"
+  id
+  "column name"
+  player_id
+  "column name"
+  questchain_id
 }
 """
 unique or primary key constraints on table "player_account"
@@ -8108,6 +8471,8 @@ enum player_select_column {
   "column name"
   id
   "column name"
+  membership_metadata
+  "column name"
   profileLayout
   "column name"
   rank
@@ -8175,6 +8540,8 @@ enum player_update_column {
   ethereumAddress
   "column name"
   id
+  "column name"
+  membership_metadata
   "column name"
   profileLayout
   "column name"
@@ -9973,9 +10340,17 @@ input dao_player_aggregate_bool_exp_count {
 order by aggregate values of table "dao_player"
 """
 input dao_player_aggregate_order_by {
+  avg: dao_player_avg_order_by
   count: order_by
   max: dao_player_max_order_by
   min: dao_player_min_order_by
+  stddev: dao_player_stddev_order_by
+  stddev_pop: dao_player_stddev_pop_order_by
+  stddev_samp: dao_player_stddev_samp_order_by
+  sum: dao_player_sum_order_by
+  var_pop: dao_player_var_pop_order_by
+  var_samp: dao_player_var_samp_order_by
+  variance: dao_player_variance_order_by
 }
 """
 input type for inserting array relation for remote table "dao_player"
@@ -9984,6 +10359,12 @@ input dao_player_arr_rel_insert_input {
   data: [dao_player_insert_input!]!
   "upsert condition"
   on_conflict: dao_player_on_conflict
+}
+"""
+order by avg() on columns of table "dao_player"
+"""
+input dao_player_avg_order_by {
+  position: order_by
 }
 """
 Boolean expression to filter rows from the table "dao_player". All fields are combined with a logical 'AND'.
@@ -9996,7 +10377,14 @@ input dao_player_bool_exp {
   _or: [dao_player_bool_exp!]
   daoId: uuid_comparison_exp
   playerId: uuid_comparison_exp
+  position: Int_comparison_exp
   visible: Boolean_comparison_exp
+}
+"""
+input type for incrementing numeric columns in table "dao_player"
+"""
+input dao_player_inc_input {
+  position: Int
 }
 """
 input type for inserting data into table "dao_player"
@@ -10006,6 +10394,7 @@ input dao_player_insert_input {
   Player: player_obj_rel_insert_input
   daoId: uuid
   playerId: uuid
+  position: Int
   visible: Boolean
 }
 """
@@ -10014,6 +10403,7 @@ order by max() on columns of table "dao_player"
 input dao_player_max_order_by {
   daoId: order_by
   playerId: order_by
+  position: order_by
 }
 """
 order by min() on columns of table "dao_player"
@@ -10021,6 +10411,7 @@ order by min() on columns of table "dao_player"
 input dao_player_min_order_by {
   daoId: order_by
   playerId: order_by
+  position: order_by
 }
 """
 on_conflict condition type for table "dao_player"
@@ -10038,6 +10429,7 @@ input dao_player_order_by {
   Player: player_order_by
   daoId: order_by
   playerId: order_by
+  position: order_by
   visible: order_by
 }
 "primary key columns input for table: dao_player"
@@ -10051,7 +10443,26 @@ input type for updating data in table "dao_player"
 input dao_player_set_input {
   daoId: uuid
   playerId: uuid
+  position: Int
   visible: Boolean
+}
+"""
+order by stddev() on columns of table "dao_player"
+"""
+input dao_player_stddev_order_by {
+  position: order_by
+}
+"""
+order by stddev_pop() on columns of table "dao_player"
+"""
+input dao_player_stddev_pop_order_by {
+  position: order_by
+}
+"""
+order by stddev_samp() on columns of table "dao_player"
+"""
+input dao_player_stddev_samp_order_by {
+  position: order_by
 }
 """
 Streaming cursor of the table "dao_player"
@@ -10066,13 +10477,40 @@ input dao_player_stream_cursor_input {
 input dao_player_stream_cursor_value_input {
   daoId: uuid
   playerId: uuid
+  position: Int
   visible: Boolean
 }
+"""
+order by sum() on columns of table "dao_player"
+"""
+input dao_player_sum_order_by {
+  position: order_by
+}
 input dao_player_updates {
+  "increments the numeric columns with given value of the filtered values"
+  _inc: dao_player_inc_input
   "sets the columns of the filtered rows to the given values"
   _set: dao_player_set_input
   "filter the rows which have to be updated"
   where: dao_player_bool_exp!
+}
+"""
+order by var_pop() on columns of table "dao_player"
+"""
+input dao_player_var_pop_order_by {
+  position: order_by
+}
+"""
+order by var_samp() on columns of table "dao_player"
+"""
+input dao_player_var_samp_order_by {
+  position: order_by
+}
+"""
+order by variance() on columns of table "dao_player"
+"""
+input dao_player_variance_order_by {
+  position: order_by
 }
 """
 input type for updating data in table "dao"
@@ -10193,6 +10631,7 @@ input guild_bool_exp {
   guildname: String_comparison_exp
   id: uuid_comparison_exp
   joinButtonUrl: String_comparison_exp
+  legitimacy: String_comparison_exp
   links: link_bool_exp
   links_aggregate: link_aggregate_bool_exp
   logo: String_comparison_exp
@@ -10228,6 +10667,7 @@ input guild_insert_input {
   guildname: String
   id: uuid
   joinButtonUrl: String
+  legitimacy: String
   links: link_arr_rel_insert_input
   logo: String
   membershipThroughDiscord: Boolean
@@ -10253,6 +10693,7 @@ input guild_max_order_by {
   guildname: order_by
   id: order_by
   joinButtonUrl: order_by
+  legitimacy: order_by
   logo: order_by
   name: order_by
   profileLayout: order_by
@@ -10387,6 +10828,7 @@ input guild_min_order_by {
   guildname: order_by
   id: order_by
   joinButtonUrl: order_by
+  legitimacy: order_by
   logo: order_by
   name: order_by
   profileLayout: order_by
@@ -10422,6 +10864,7 @@ input guild_order_by {
   guildname: order_by
   id: order_by
   joinButtonUrl: order_by
+  legitimacy: order_by
   links_aggregate: link_aggregate_order_by
   logo: order_by
   membershipThroughDiscord: order_by
@@ -10441,7 +10884,21 @@ input guild_pk_columns_input {
   id: uuid!
 }
 input guild_player_aggregate_bool_exp {
+  bool_and: guild_player_aggregate_bool_exp_bool_and
+  bool_or: guild_player_aggregate_bool_exp_bool_or
   count: guild_player_aggregate_bool_exp_count
+}
+input guild_player_aggregate_bool_exp_bool_and {
+  arguments: guild_player_select_column_guild_player_aggregate_bool_exp_bool_and_arguments_columns!
+  distinct: Boolean
+  filter: guild_player_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+input guild_player_aggregate_bool_exp_bool_or {
+  arguments: guild_player_select_column_guild_player_aggregate_bool_exp_bool_or_arguments_columns!
+  distinct: Boolean
+  filter: guild_player_bool_exp
+  predicate: Boolean_comparison_exp!
 }
 input guild_player_aggregate_bool_exp_count {
   arguments: [guild_player_select_column!]
@@ -10453,9 +10910,17 @@ input guild_player_aggregate_bool_exp_count {
 order by aggregate values of table "guild_player"
 """
 input guild_player_aggregate_order_by {
+  avg: guild_player_avg_order_by
   count: order_by
   max: guild_player_max_order_by
   min: guild_player_min_order_by
+  stddev: guild_player_stddev_order_by
+  stddev_pop: guild_player_stddev_pop_order_by
+  stddev_samp: guild_player_stddev_samp_order_by
+  sum: guild_player_sum_order_by
+  var_pop: guild_player_var_pop_order_by
+  var_samp: guild_player_var_samp_order_by
+  variance: guild_player_variance_order_by
 }
 """
 input type for inserting array relation for remote table "guild_player"
@@ -10464,6 +10929,12 @@ input guild_player_arr_rel_insert_input {
   data: [guild_player_insert_input!]!
   "upsert condition"
   on_conflict: guild_player_on_conflict
+}
+"""
+order by avg() on columns of table "guild_player"
+"""
+input guild_player_avg_order_by {
+  position: order_by
 }
 """
 Boolean expression to filter rows from the table "guild_player". All fields are combined with a logical 'AND'.
@@ -10476,6 +10947,14 @@ input guild_player_bool_exp {
   _or: [guild_player_bool_exp!]
   guildId: uuid_comparison_exp
   playerId: uuid_comparison_exp
+  position: Int_comparison_exp
+  visible: Boolean_comparison_exp
+}
+"""
+input type for incrementing numeric columns in table "guild_player"
+"""
+input guild_player_inc_input {
+  position: Int
 }
 """
 input type for inserting data into table "guild_player"
@@ -10485,6 +10964,8 @@ input guild_player_insert_input {
   Player: player_obj_rel_insert_input
   guildId: uuid
   playerId: uuid
+  position: Int
+  visible: Boolean
 }
 """
 order by max() on columns of table "guild_player"
@@ -10492,6 +10973,7 @@ order by max() on columns of table "guild_player"
 input guild_player_max_order_by {
   guildId: order_by
   playerId: order_by
+  position: order_by
 }
 """
 order by min() on columns of table "guild_player"
@@ -10499,6 +10981,7 @@ order by min() on columns of table "guild_player"
 input guild_player_min_order_by {
   guildId: order_by
   playerId: order_by
+  position: order_by
 }
 """
 on_conflict condition type for table "guild_player"
@@ -10516,6 +10999,8 @@ input guild_player_order_by {
   Player: player_order_by
   guildId: order_by
   playerId: order_by
+  position: order_by
+  visible: order_by
 }
 "primary key columns input for table: guild_player"
 input guild_player_pk_columns_input {
@@ -10528,6 +11013,26 @@ input type for updating data in table "guild_player"
 input guild_player_set_input {
   guildId: uuid
   playerId: uuid
+  position: Int
+  visible: Boolean
+}
+"""
+order by stddev() on columns of table "guild_player"
+"""
+input guild_player_stddev_order_by {
+  position: order_by
+}
+"""
+order by stddev_pop() on columns of table "guild_player"
+"""
+input guild_player_stddev_pop_order_by {
+  position: order_by
+}
+"""
+order by stddev_samp() on columns of table "guild_player"
+"""
+input guild_player_stddev_samp_order_by {
+  position: order_by
 }
 """
 Streaming cursor of the table "guild_player"
@@ -10542,12 +11047,40 @@ input guild_player_stream_cursor_input {
 input guild_player_stream_cursor_value_input {
   guildId: uuid
   playerId: uuid
+  position: Int
+  visible: Boolean
+}
+"""
+order by sum() on columns of table "guild_player"
+"""
+input guild_player_sum_order_by {
+  position: order_by
 }
 input guild_player_updates {
+  "increments the numeric columns with given value of the filtered values"
+  _inc: guild_player_inc_input
   "sets the columns of the filtered rows to the given values"
   _set: guild_player_set_input
   "filter the rows which have to be updated"
   where: guild_player_bool_exp!
+}
+"""
+order by var_pop() on columns of table "guild_player"
+"""
+input guild_player_var_pop_order_by {
+  position: order_by
+}
+"""
+order by var_samp() on columns of table "guild_player"
+"""
+input guild_player_var_samp_order_by {
+  position: order_by
+}
+"""
+order by variance() on columns of table "guild_player"
+"""
+input guild_player_variance_order_by {
+  position: order_by
 }
 """
 input type for updating data in table "guild"
@@ -10559,6 +11092,7 @@ input guild_set_input {
   guildname: String
   id: uuid
   joinButtonUrl: String
+  legitimacy: String
   logo: String
   membershipThroughDiscord: Boolean
   name: String
@@ -10606,6 +11140,7 @@ input guild_stream_cursor_value_input {
   guildname: String
   id: uuid
   joinButtonUrl: String
+  legitimacy: String
   logo: String
   membershipThroughDiscord: Boolean
   name: String
@@ -10865,6 +11400,75 @@ input numeric_comparison_exp {
   _neq: numeric
   _nin: [numeric!]
 }
+"""
+Boolean expression to filter rows from the table "pinned_questchains". All fields are combined with a logical 'AND'.
+"""
+input pinned_questchains_bool_exp {
+  _and: [pinned_questchains_bool_exp!]
+  _not: pinned_questchains_bool_exp
+  _or: [pinned_questchains_bool_exp!]
+  id: uuid_comparison_exp
+  player_id: uuid_comparison_exp
+  questchain_id: String_comparison_exp
+}
+"""
+input type for inserting data into table "pinned_questchains"
+"""
+input pinned_questchains_insert_input {
+  id: uuid
+  player_id: uuid
+  questchain_id: String
+}
+"""
+on_conflict condition type for table "pinned_questchains"
+"""
+input pinned_questchains_on_conflict {
+  constraint: pinned_questchains_constraint!
+  update_columns: [pinned_questchains_update_column!]! = []
+  where: pinned_questchains_bool_exp
+}
+"""
+Ordering options when selecting data from "pinned_questchains".
+"""
+input pinned_questchains_order_by {
+  id: order_by
+  player_id: order_by
+  questchain_id: order_by
+}
+"primary key columns input for table: pinned_questchains"
+input pinned_questchains_pk_columns_input {
+  player_id: uuid!
+  questchain_id: String!
+}
+"""
+input type for updating data in table "pinned_questchains"
+"""
+input pinned_questchains_set_input {
+  id: uuid
+  player_id: uuid
+  questchain_id: String
+}
+"""
+Streaming cursor of the table "pinned_questchains"
+"""
+input pinned_questchains_stream_cursor_input {
+  "Stream column input with initial value"
+  initial_value: pinned_questchains_stream_cursor_value_input!
+  "cursor ordering"
+  ordering: cursor_ordering
+}
+"Initial value of the column from where the streaming should start"
+input pinned_questchains_stream_cursor_value_input {
+  id: uuid
+  player_id: uuid
+  questchain_id: String
+}
+input pinned_questchains_updates {
+  "sets the columns of the filtered rows to the given values"
+  _set: pinned_questchains_set_input
+  "filter the rows which have to be updated"
+  where: pinned_questchains_bool_exp!
+}
 input player_account_aggregate_bool_exp {
   count: player_account_aggregate_bool_exp_count
 }
@@ -10977,6 +11581,10 @@ input player_account_updates {
   "filter the rows which have to be updated"
   where: player_account_bool_exp!
 }
+"append existing jsonb value of filtered columns with new jsonb value"
+input player_append_input {
+  membership_metadata: jsonb
+}
 """
 Boolean expression to filter rows from the table "player". All fields are combined with a logical 'AND'.
 """
@@ -10998,6 +11606,7 @@ input player_bool_exp {
   id: uuid_comparison_exp
   links: link_bool_exp
   links_aggregate: link_aggregate_bool_exp
+  membership_metadata: jsonb_comparison_exp
   profile: profile_bool_exp
   profileLayout: String_comparison_exp
   quest_completions: quest_completion_bool_exp
@@ -11015,6 +11624,18 @@ input player_bool_exp {
   updatedAt: timestamptz_comparison_exp
   xps: xp_bool_exp
   xps_aggregate: xp_aggregate_bool_exp
+}
+"delete the field or element with specified path (for JSON arrays, negative integers count from the end)"
+input player_delete_at_path_input {
+  membership_metadata: [String!]
+}
+"delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array"
+input player_delete_elem_input {
+  membership_metadata: Int
+}
+"delete key/value pair or string element. key/value pairs are matched based on their key value"
+input player_delete_key_input {
+  membership_metadata: String
 }
 """
 input type for incrementing numeric columns in table "player"
@@ -11037,6 +11658,7 @@ input player_insert_input {
   guilds: guild_player_arr_rel_insert_input
   id: uuid
   links: link_arr_rel_insert_input
+  membership_metadata: jsonb
   profile: profile_obj_rel_insert_input
   profileLayout: String
   quest_completions: quest_completion_arr_rel_insert_input
@@ -11080,6 +11702,7 @@ input player_order_by {
   guilds_aggregate: guild_player_aggregate_order_by
   id: order_by
   links_aggregate: link_aggregate_order_by
+  membership_metadata: order_by
   profile: profile_order_by
   profileLayout: order_by
   quest_completions_aggregate: quest_completion_aggregate_order_by
@@ -11096,6 +11719,10 @@ input player_order_by {
 "primary key columns input for table: player"
 input player_pk_columns_input {
   id: uuid!
+}
+"prepend existing jsonb value of filtered columns with new jsonb value"
+input player_prepend_input {
+  membership_metadata: jsonb
 }
 input player_role_aggregate_bool_exp {
   count: player_role_aggregate_bool_exp_count
@@ -11284,6 +11911,7 @@ input player_set_input {
   discordId: String
   ethereumAddress: String
   id: uuid
+  membership_metadata: jsonb
   profileLayout: String
   rank: PlayerRank_enum
   role: String
@@ -11491,6 +12119,7 @@ input player_stream_cursor_value_input {
   discordId: String
   ethereumAddress: String
   id: uuid
+  membership_metadata: jsonb
   profileLayout: String
   rank: PlayerRank_enum
   role: String
@@ -11499,8 +12128,18 @@ input player_stream_cursor_value_input {
   updatedAt: timestamptz
 }
 input player_updates {
+  "append existing jsonb value of filtered columns with new jsonb value"
+  _append: player_append_input
+  "delete the field or element with specified path (for JSON arrays, negative integers count from the end)"
+  _delete_at_path: player_delete_at_path_input
+  "delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array"
+  _delete_elem: player_delete_elem_input
+  "delete key/value pair or string element. key/value pairs are matched based on their key value"
+  _delete_key: player_delete_key_input
   "increments the numeric columns with given value of the filtered values"
   _inc: player_inc_input
+  "prepend existing jsonb value of filtered columns with new jsonb value"
+  _prepend: player_prepend_input
   "sets the columns of the filtered rows to the given values"
   _set: player_set_input
   "filter the rows which have to be updated"
