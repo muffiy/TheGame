@@ -29,7 +29,7 @@ import {
   QuestStatus_Enum,
   useGetQuestWithCompletionsQuery,
 } from 'graphql/autogen/types';
-import { getSsrClient } from 'graphql/client';
+import { getSSRClient } from 'graphql/client';
 import { getQuestWithCompletions } from 'graphql/getQuest';
 import { getQuestIds } from 'graphql/getQuests';
 import { useUser } from 'lib/hooks';
@@ -39,7 +39,6 @@ import {
   InferGetStaticPropsType,
 } from 'next';
 import { useRouter } from 'next/router';
-import { SSRData } from 'next-urql';
 import DefaultQuestImage from 'public/assets/QuestsDefaultImage_900x900.jpg';
 import React, { useMemo } from 'react';
 import { canCompleteQuest } from 'utils/questHelpers';
@@ -214,13 +213,13 @@ export const getStaticProps = async (
   | {
       props: {
         quest_id?: string;
-        urqlState: SSRData;
+        urqlState: unknown;
       };
       revalidate: 1;
     }
   | { notFound: boolean }
 > => {
-  const [ssrClient, ssrCache] = getSsrClient();
+  const [ssrClient, ssrCache] = getSSRClient();
 
   const id = context.params?.id;
   const quest = await getQuestWithCompletions(id, ssrClient);

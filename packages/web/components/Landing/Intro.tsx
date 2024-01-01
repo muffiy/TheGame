@@ -30,7 +30,6 @@ export const Intro: React.FC<LandingPageSectionProps> = ({
   activeSectionIndex,
 }) => {
   const [onScreen, setOnScreen] = useState(false);
-  const [showQuote, setShowQuote] = useState(false);
   const root = typeof window !== 'undefined' ? document.body : null;
   const noMotion = useMotionDetector(root);
   const displayElement = noMotion ? true : !!onScreen;
@@ -41,11 +40,6 @@ export const Intro: React.FC<LandingPageSectionProps> = ({
     '3xl': BackgroundImage4xl,
     '5xl': BackgroundImage5xl,
   });
-
-  const toggleQuote = () => {
-    setShowQuote(!showQuote);
-    return null;
-  };
 
   useEffect(() => {
     setTimeout(() => setOnScreen(activeSectionIndex === 0), 500);
@@ -93,14 +87,14 @@ export const Intro: React.FC<LandingPageSectionProps> = ({
             'transform 0.3s 0.1s ease-in-out, opacity 0.5s 0.2s ease-in'
           }
         >
-          <Flex h="100%" w="100%" direction="column">
+          <Flex h="100%" w="100%" direction="column" pb="12">
             <Heading
               flex={1}
               as="h1"
               fontFamily="landingHeading"
               textTransform="uppercase"
               className="gradient"
-              fontSize={{ base: 'lg', lg: 'md', '3xl': 'lg', '4xl': '3xl' }}
+              fontSize={{ base: 'lg', lg: 'lg', '3xl': 'xl', '4xl': '3xl' }}
               fontWeight={100}
               my={0}
               top={0}
@@ -118,7 +112,7 @@ export const Intro: React.FC<LandingPageSectionProps> = ({
               <Heading
                 as="h1"
                 fontFamily="exo2"
-                fontWeight="normal"
+                fontWeight="600"
                 fontSize={{ base: '2xl', lg: '5xl' }}
                 textAlign={{ base: 'left', lg: 'center' }}
               >
@@ -128,8 +122,9 @@ export const Intro: React.FC<LandingPageSectionProps> = ({
                 mt={3}
                 fontSize={{ base: 'lg', lg: '2xl' }}
                 textAlign={{ base: 'left', lg: 'center' }}
+                fontWeight={500}
               >
-                MetaGame is a decentralized factory for builders of the future{' '}
+                MetaGame is a decentralized factory for builders of the future,{' '}
                 <br /> a DAO incubation & growth platform.
               </Text>
               <Flex w="100%" justify="center" mt={8} gap={6}>
