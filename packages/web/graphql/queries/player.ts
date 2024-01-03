@@ -24,7 +24,7 @@ const getPlayerPinnedQuestchainsQuery = /* GraphQL */ `
       questchain_id
     }
   }
-`
+`;
 const getPlayerGuildMembershipsQuery = /* GraphQL */ `
   query getPlayerGuildMemberships($playerId: uuid!) {
     guild_player(
