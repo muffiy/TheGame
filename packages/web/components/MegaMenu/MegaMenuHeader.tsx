@@ -538,10 +538,16 @@ export const MegaMenuHeader: React.FC = () => {
               )}
             </Box>
           </Flex>
-          <Flex align="center" justify="center" pos="relative" display="flex">
+          <Flex
+            align="center"
+            justify="end"
+            pos="relative"
+            w={{ base: '100%', xl: 'auto' }}
+            display="flex"
+          >
             <HeaderSearchBar
-              display={{ base: 'none', sm: 'flex', xl: 'none' }}
-              right={5}
+              display={{ sm: 'flex', xl: 'none' }}
+              right={{ sm: 2, lg: 5 }}
               onOpen={onSearchOpen}
             />
             <Logo
