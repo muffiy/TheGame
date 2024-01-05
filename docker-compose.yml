@@ -24,11 +24,11 @@ services:
       HASURA_GRAPHQL_DEV_MODE: ${HASURA_GRAPHQL_DEV_MODE:-false}
 
   database:
-    image: postgres:16
+    image: postgres:12
     volumes:
       - database:/var/lib/postgresql/data
     ports:
-      - 5433:5433
+      - 5432:5432
     environment:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
